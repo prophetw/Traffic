@@ -89,6 +89,8 @@ class Car {
     this.curSpeed = Math.min(this.maxSpeed, this.curSpeed);
     this.curSpeed = Math.max(0, this.curSpeed);
   }
+  getCurLane() {}
+  getRoadLimitSpeed() {}
   stop() {}
   speedUp() {}
   slowDown() {}
@@ -124,9 +126,11 @@ class Lane {
   disabled: boolean;
   canSwitchLeft: boolean;
   canSwitchRight: boolean;
+  vehicleAry: Car[];
   constructor(lenth = 100, canSwitchLeft = false, canSwitchRight = false) {
     this.lenth = lenth;
     this.disabled = false;
+    this.vehicleAry = [];
     this.canSwitchLeft = canSwitchLeft;
     this.canSwitchRight = canSwitchRight;
   }

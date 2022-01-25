@@ -36,6 +36,6 @@ describe(' test ', () => {
     newC2.runFor(10);
     console.log(newC2);
     newC.runFor(9);
-    expect(newC.curSpeed).toBeLessThanOrEqual(newC2.curSpeed);
+    expect(newC.curSpeed).toBe(newC2.curSpeed);
   });
 });
