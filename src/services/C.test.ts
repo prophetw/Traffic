@@ -28,4 +28,14 @@ describe(' test ', () => {
     newC.runFor(30);
     expect(newC.curSpeed).toBe(newC.maxSpeed);
   });
+  test(' safe distance ', () => {
+    const stg = new ClassicDriverStrategy();
+    const newC = new Car(stg);
+    const newC2 = new TruckCar(stg);
+    newC.setFrontCar(newC2);
+    newC2.runFor(10);
+    console.log(newC2);
+    newC.runFor(9);
+    expect(newC.curSpeed).toBeLessThanOrEqual(newC2.curSpeed);
+  });
 });
