@@ -1,4 +1,6 @@
 // how to detect other car's distance with you  realLife there are cejuyi  leida
+// know which lane is
+// know which road is
 
 class SpeedUpStrategy {
   // RLS road limit speed
@@ -12,40 +14,55 @@ class SwitchLaneStrategy {
 }
 
 class DriverStrategy {
-  speedUpRate: number;
-  slowDownRate: number;
-  constructor(speedUpRate: number, slowDownRate: number) {
+  speedUpRate: number; //
+  constructor(speedUpRate: number) {
     this.speedUpRate = speedUpRate;
-    this.slowDownRate = slowDownRate;
   }
 }
 
 class ClassicDriverStrategy extends DriverStrategy {
   constructor() {
-    super(10, 10);
+    super(0.5); //medAcceleration
   }
 }
 
 class SportsDriverStrategy extends DriverStrategy {
   constructor() {
-    super(20, 20);
+    super(1); // maxAcceleration
   }
 }
 
 class Car {
   width: number;
   lenth: number;
-  curSpeed: number;
+  acceleration: number;
+  _curSpeed: number;
   maxSpeed: number;
   distance: number;
   driver: DriverStrategy;
   timecost: number;
+  safeDistance: number;
+  frontCar?: Car;
+  set curSpeed(speed: number) {
+    this._curSpeed = speed; // km/h
+    // need 3 seconds to slow down to 0 speed
+    this.safeDistance = Math.max(
+      2,
+      ((this._curSpeed * 3) / 3600) * 1000 -
+        (((1 / 2) * this._curSpeed) / 3) * ((3 * 3) / 3600) * 1000,
+    );
+  }
+  get curSpeed() {
+    return this._curSpeed;
+  }
   constructor(strategy: DriverStrategy) {
     this.width = 2;
-    this.curSpeed = 0;
+    this._curSpeed = 0;
+    this.acceleration = 20;
     this.distance = 0;
+    this.safeDistance = 2;
     this.lenth = 3;
-    this.maxSpeed = 220;
+    this.maxSpeed = 200;
     this.driver = strategy;
     this.timecost = Date.now();
   }
@@ -61,7 +78,7 @@ class Car {
   start() {}
   runFor(seconds: number) {
     // test car run period of time
-    const rate = this.driver.speedUpRate;
+    const rate = this.driver.speedUpRate * this.acceleration;
     // v = v0 + at
     // s = vt + 1/2*a*t*t
     this.distance =
@@ -69,6 +86,8 @@ class Car {
       this.curSpeed * seconds +
       (1 / 2) * rate * seconds * seconds;
     this.curSpeed = this.curSpeed + rate * seconds;
+    this.curSpeed = Math.min(this.maxSpeed, this.curSpeed);
+    this.curSpeed = Math.max(0, this.curSpeed);
   }
   stop() {}
   speedUp() {}
@@ -82,12 +101,18 @@ class Car {
     this.curSpeed = 0;
     this.distance = 0;
   }
-  getFrontCarInfo() {}
+  setFrontCar(car: Car) {
+    this.frontCar = car;
+  }
+  getFrontCar() {
+    return this.frontCar;
+  }
   getCarLB5M() {}
 }
 class TruckCar extends Car {
   constructor(strategy: DriverStrategy) {
     super(strategy);
+    this.acceleration = 10;
     this.width = 2;
     this.lenth = 10;
     this.maxSpeed = 100;
@@ -142,4 +167,4 @@ class Road {
   constructor() {}
 }
 
-export { Car, Lane, ClassicDriverStrategy };
+export { Car, TruckCar, Lane, ClassicDriverStrategy };
