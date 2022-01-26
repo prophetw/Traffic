@@ -1,14 +1,7 @@
 import { Car, Lane, TruckCar, ClassicDriverStrategy } from './C';
 
-const sleep = async (delay: number) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(true);
-    }, delay * 1000);
-  });
-};
 describe(' test ', () => {
-  test(' limitSpeed ', async () => {
+  test.skip(' limitSpeed ', async () => {
     console.log('1');
     const stg = new ClassicDriverStrategy();
     const newC = new Car(stg);
@@ -26,7 +19,23 @@ describe(' test ', () => {
     expect(newC2.curSpeed).toBe(newC2.maxSpeed);
     expect(newC.curSpeed).toBe(30);
     newC.runFor(30);
-    expect(newC.curSpeed).toBe(newC.maxSpeed);
+    expect(newC.curSpeed).toBe(newC.getMaxSpeed());
+  });
+  test(' no collision ', () => {
+    const stg = new ClassicDriverStrategy();
+    const newC = new Car(stg);
+    const newC2 = new TruckCar(stg);
+    newC.setFrontCar(newC2);
+    newC2.runFor(10);
+    console.log(newC2);
+    newC.runFor(10);
+    const isCollision = newC.isCollision(newC2);
+    expect(isCollision).toBeFalsy();
+  });
+  test(' get position info ', () => {
+    // 1 use distance
+    // 2 like gps x y z
+    // 3 lane offsetFromStart
   });
   test(' safe distance ', () => {
     const stg = new ClassicDriverStrategy();
@@ -38,4 +47,7 @@ describe(' test ', () => {
     newC.runFor(9);
     expect(newC.curSpeed).toBe(newC2.curSpeed);
   });
+  test(' switch lane and speed up and overtake ', () => {});
+  test(' get frontCar from lane carAry ', () => {});
+  test(' get limitSpeed from roadInfo ', () => {});
 });

@@ -39,6 +39,7 @@ class Car {
   _curSpeed: number;
   maxSpeed: number;
   distance: number;
+  offset: number;
   driver: DriverStrategy;
   timecost: number;
   safeDistance: number;
@@ -59,7 +60,8 @@ class Car {
     this.width = 2;
     this._curSpeed = 0;
     this.acceleration = 20;
-    this.distance = 0;
+    this.offset = 0; // offset to start of lane
+    this.distance = 0; // total
     this.safeDistance = 2;
     this.lenth = 3;
     this.maxSpeed = 200;
@@ -81,19 +83,46 @@ class Car {
     const rate = this.driver.speedUpRate * this.acceleration;
     // v = v0 + at
     // s = vt + 1/2*a*t*t
+    const stableSpeed = this.getMaxSpeed();
+    const totalAccelerationSeconds = (stableSpeed - this.curSpeed) / rate; // acceleration time
+    const avalibleAccelerationSeconds = Math.min(
+      seconds,
+      totalAccelerationSeconds,
+    );
+    const restSeconds = Math.max(0, seconds - totalAccelerationSeconds); // stableSpeed run time
     this.distance =
       this.distance +
-      this.curSpeed * seconds +
-      (1 / 2) * rate * seconds * seconds;
-    this.curSpeed = this.curSpeed + rate * seconds;
-    this.curSpeed = Math.min(this.maxSpeed, this.curSpeed);
+      this.curSpeed * avalibleAccelerationSeconds +
+      (1 / 2) *
+        rate *
+        avalibleAccelerationSeconds *
+        avalibleAccelerationSeconds +
+      restSeconds * stableSpeed;
+    this.curSpeed = this.curSpeed + rate * avalibleAccelerationSeconds;
+    this.curSpeed = Math.min(stableSpeed, this.curSpeed);
     this.curSpeed = Math.max(0, this.curSpeed);
   }
+  getMaxSpeed() {
+    const roadLimitSpeed = this.getRoadLimitSpeed();
+    const carMaxSpeed = this.maxSpeed;
+    return Math.min(carMaxSpeed, roadLimitSpeed);
+  }
   getCurLane() {}
-  getRoadLimitSpeed() {}
+  getRoadLimitSpeed() {
+    return 120;
+  }
   stop() {}
   speedUp() {}
   slowDown() {}
+  getPosition() {
+    // 1. simple method use distance
+    // 2. lane + offset       switch lane then update new offset
+  }
+  isCollision(otherCar: Car) {
+    // how to calculate isCollision
+    // position
+    return true;
+  }
   init() {
     this.timecost = Date.now();
   }
@@ -156,6 +185,10 @@ class RGLight extends RoadDevice {
   init() {}
 }
 
+class StopLine extends RoadDevice {
+  // stop at this line if condition
+}
+
 class RoadSegment {
   lanes?: Lane[];
   limitSpeed: number;
@@ -171,4 +204,4 @@ class Road {
   constructor() {}
 }
 
-export { Car, TruckCar, Lane, ClassicDriverStrategy };
+export { Car, TruckCar, Lane, ClassicDriverStrategy, SportsDriverStrategy };
