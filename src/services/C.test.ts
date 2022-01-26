@@ -21,6 +21,40 @@ describe(' test ', () => {
     newC.runFor(30);
     expect(newC.curSpeed).toBe(newC.getMaxSpeed());
   });
+  test(' stop ', () => {
+    const stg = new ClassicDriverStrategy();
+    const newC = new Car(stg);
+    newC.runFor(3);
+    newC.stop();
+    console.log(newC);
+
+    expect(newC.curSpeed).toBe(0);
+    expect(newC.safeDistance).toBe(2);
+    expect(newC.distance).toBe(90);
+    newC.runFor(3);
+    console.log(newC);
+    expect(newC.distance).toBe(135);
+    newC.runFor(3);
+    console.log(newC);
+    expect(newC.distance).toBe(270);
+    newC.runFor(14);
+    expect(newC.curSpeed).toBe(newC.getMaxSpeed());
+  });
+  test(' maxSpeed ', () => {
+    const stg = new ClassicDriverStrategy();
+    const newC = new Car(stg);
+    newC.runFor(20);
+    expect(newC.distance).toBe(1680);
+    newC.stop();
+    newC.destroy();
+    console.log(newC);
+    newC.runFor(3);
+    newC.runFor(3);
+    newC.runFor(14);
+    console.log(newC);
+    expect(newC.distance).toBe(1680);
+    expect(newC.curSpeed).toBe(newC.getMaxSpeed());
+  });
   test(' no collision ', () => {
     const stg = new ClassicDriverStrategy();
     const newC = new Car(stg);

@@ -52,6 +52,9 @@ class Car {
       ((this._curSpeed * 3) / 3600) * 1000 -
         (((1 / 2) * this._curSpeed) / 3) * ((3 * 3) / 3600) * 1000,
     );
+    if (speed === 0) {
+      this.safeDistance = 2;
+    }
   }
   get curSpeed() {
     return this._curSpeed;
@@ -111,7 +114,18 @@ class Car {
   getRoadLimitSpeed() {
     return 120;
   }
-  stop() {}
+  stop() {
+    // assume stop in 3 seconds
+    const secondsToStop = 3;
+    const slowDownRate = -this.curSpeed / secondsToStop;
+    this.distance =
+      this.distance +
+      this.curSpeed * secondsToStop +
+      (1 / 2) * slowDownRate * secondsToStop * secondsToStop;
+    this.curSpeed = this.curSpeed + slowDownRate * secondsToStop;
+    this.curSpeed = Math.max(0, this.curSpeed);
+  }
+  stopAt(distance: number) {}
   speedUp() {}
   slowDown() {}
   getPosition() {
@@ -120,6 +134,7 @@ class Car {
   }
   isCollision(otherCar: Car) {
     // how to calculate isCollision
+    // const position = this.distance
     // position
     return true;
   }
@@ -131,6 +146,7 @@ class Car {
     console.log('reach end time cost is: ', this.timecost);
     this.curSpeed = 0;
     this.distance = 0;
+    this.safeDistance = 2;
   }
   setFrontCar(car: Car) {
     this.frontCar = car;
