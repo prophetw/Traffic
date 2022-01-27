@@ -1,9 +1,17 @@
 // how to detect other car's distance with you  realLife there are cejuyi  leida
 // know which lane is
 // know which road is
+import EventEmitter from 'eventemitter3';
+class GlobalService extends EventEmitter {
+  EmitTrafficLightAhead() {
+    // 100m ahead traffic light
+    this.emit('trafficLightAhead', 100);
+  }
+}
+const globalService = new GlobalService();
 
 class SpeedUpStrategy {
-  // RLS road limit speed
+  // RLS === road limit speed
   // 10s to speed up to RLS and < carMaxSpeed and NoCollision
   // 5s to speed up to RLS and < carMaxSpeed and NoCollision
 }
@@ -33,6 +41,7 @@ class SportsDriverStrategy extends DriverStrategy {
 }
 
 class Car {
+  globalService?: GlobalService;
   width: number;
   lenth: number;
   acceleration: number;
@@ -80,7 +89,9 @@ class Car {
       // wait till can switch
     }
   }
-  start() {}
+  start() {
+    // speed up until stop event is emitted
+  }
   runFor(seconds: number) {
     // test car run period of time
     const rate = this.driver.speedUpRate * this.acceleration;
@@ -125,9 +136,25 @@ class Car {
     this.curSpeed = this.curSpeed + slowDownRate * secondsToStop;
     this.curSpeed = Math.max(0, this.curSpeed);
   }
-  stopAt(distance: number) {}
+  stopAt(distance: number) {
+    // speed up to prop position
+    const maxSpeedAvaliable = this.getMaxSpeed();
+    if (this.curSpeed < maxSpeedAvaliable) {
+      // first speed up to maxSpeed and run at maxSpeed before stop
+      // then slow down to stop at dest
+    } else {
+      // run at maxSpeed then slow down to stop at dest
+    }
+  }
   speedUp() {}
+  speedUpTo(specifiedSpeed: number) {}
   slowDown() {}
+  slowDownTo(specifiedSpeed: number) {
+    // slow down to a speed
+  }
+  takeover(frontCar: Car) {
+    // takeover beyond frontcar
+  }
   getPosition() {
     // 1. simple method use distance
     // 2. lane + offset       switch lane then update new offset

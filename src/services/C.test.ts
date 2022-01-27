@@ -40,6 +40,15 @@ describe(' test ', () => {
     newC.runFor(14);
     expect(newC.curSpeed).toBe(newC.getMaxSpeed());
   });
+  test.only(' stop at distance ', () => {
+    //
+    const stg = new ClassicDriverStrategy();
+    const newC = new Car(stg);
+    newC.start();
+    newC.stopAt(3000);
+    expect(newC.distance).toBe(3000);
+    expect(newC.curSpeed).toBe(0);
+  });
   test(' maxSpeed ', () => {
     const stg = new ClassicDriverStrategy();
     const newC = new Car(stg);
@@ -84,4 +93,7 @@ describe(' test ', () => {
   test(' switch lane and speed up and overtake ', () => {});
   test(' get frontCar from lane carAry ', () => {});
   test(' get limitSpeed from roadInfo ', () => {});
+  test(' frontCar run 30s then stopped the car which after frontCar stop after front car', () => {});
+  test(' frontCar run 30s then run at maxSpeed the car which after frontCar run the same maxSpeed and keep safedistance', () => {});
+  test(' red green light ', () => {});
 });
