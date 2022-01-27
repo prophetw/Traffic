@@ -136,9 +136,33 @@ class Car {
     this.curSpeed = this.curSpeed + slowDownRate * secondsToStop;
     this.curSpeed = Math.max(0, this.curSpeed);
   }
+  getTargetSpeedDistance(targetSpeed: number) {
+    // distance that  0 => targetSpeed => 0
+    const speedUpDistance = this.getSpeedUpToTargetSpeedDistance(targetSpeed);
+    const slowDownDistance = this.getSlowToZeroDistance();
+    return speedUpDistance + slowDownDistance;
+  }
+  getSlowToZeroDistance() {
+    // assume 3s to stop
+    const secondsStopNeed = 3;
+    const rate = -this.curSpeed / secondsStopNeed;
+    const distance = this.curSpeed * secondsStopNeed + (1 / 2) * rate * 9;
+    return distance;
+  }
+  getSpeedUpToTargetSpeedDistance(targetSpeed: number) {
+    // assume 3s to stop
+    const rate = this.driver.speedUpRate * this.acceleration; //
+    // const rate = thi
+    const secondsNeedToTargetSp = (targetSpeed - this.curSpeed) / rate;
+    const distance =
+      this.curSpeed * secondsNeedToTargetSp +
+      (1 / 2) * rate * secondsNeedToTargetSp * secondsNeedToTargetSp;
+    return distance;
+  }
   stopAt(distance: number) {
     // speed up to prop position
     const maxSpeedAvaliable = this.getMaxSpeed();
+    const;
     if (this.curSpeed < maxSpeedAvaliable) {
       // first speed up to maxSpeed and run at maxSpeed before stop
       // then slow down to stop at dest
